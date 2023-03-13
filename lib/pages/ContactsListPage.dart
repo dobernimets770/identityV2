@@ -80,9 +80,11 @@ class _ContactsListPage extends State<ContactsListPage>
       contactsSearch = snapshot.data!["contacts"] as List<Contact>;
     }
 
-    List<String> phones =
-        ContactsManager().getOnlyFhonesContacts(contactsSearch);
-    addContactWhatsAppImage(phones);
+    Timer(const Duration(milliseconds: 100), () {
+      List<String> phones =
+          ContactsManager().getOnlyFhonesContacts(contactsSearch);
+      addContactWhatsAppImage(phones);
+    });
 
     return ContactViewGrid(
       localPath: snapshot.data!["localPath"],
@@ -95,9 +97,20 @@ class _ContactsListPage extends State<ContactsListPage>
   }
 
   addContactWhatsAppImage(List<String> phones) async {
-    await ContactsManager().addContactWhatsAppImage(phones, getContacts);
+    List<Contact> contacsToUpdateWhatsappImage = await ContactsManager()
+        .addContactWhatsAppImageTEST(phones, contactsSearch);
+    if (contacsToUpdateWhatsappImage.length == 0) return;
+    Map<String, dynamic> contactsObject =
+        await ContactsManager().indexContacts(contactsSearch);
+    for (Contact contact in contacsToUpdateWhatsappImage) {
+      if (contact.uniquePhone == contactsObject["uniquePhone"]) {
+        contactsObject["whatsappImg"] = contact.whatsappImg;
+      }
+    }
+    var contactsSearchWithUpdateWhatsapp =
+        ContactsManager().convertContactsObjectToArr(contactsObject);
     setState(() {
-      contactsSearch = contactsSearch;
+      contactsSearch = contactsSearchWithUpdateWhatsapp;
     });
   }
 
@@ -126,7 +139,7 @@ class _ContactsListPage extends State<ContactsListPage>
       return;
     }
     var result = await ContactsManager()
-        .findContactsDeviceByNameAndPhone(controllerContactSearch.text, 15);
+        .findContactsDeviceByNameAndPhone(controllerContactSearch.text, 100);
 
     if (result.length == 0) {
       setState(() {

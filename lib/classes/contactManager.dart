@@ -174,8 +174,17 @@ class ContactsManager {
   }
 
   indexContacts(List<Contact> contacts) {
-    Map<String, dynamic> contactsObject = Map.fromIterable(contacts,
-        key: (contact) => contact['uniquePhone'], value: (contact) => contact);
+    Map<String, Contact> contactsObject = {};
+    for (var contact in contacts) {
+      contactsObject[contact.identifier!] = contact;
+    }
+
+    return contactsObject;
+  }
+
+  convertContactsObjectToArr(Map<String, dynamic> contactsObject) {
+    List<Contact> contacs = List.from(contactsObject.values);
+    return contacs;
   }
 
 //
@@ -198,16 +207,15 @@ class ContactsManager {
 //
 //
 //
-  addContactWhatsAppImageTEST(List<String> phones,
-      Future<Map<String, dynamic>> contactsDeviceSnapshot) async {
-    List<Contact> contacsToUpdate = [];
+  addContactWhatsAppImageTEST(
+      List<String> phones, List<Contact> contactsDevice) async {
+    List<Contact> contacsToUpdateWhatsappImage = [];
     List<Map<String, Object>> listUpdatefilewhatsappImage = [];
-    var contactsDevice = await contactsDeviceSnapshot;
 
     var contactServer =
         await ContactsManager().getWhatsAppImageContacts(phones);
 
-    for (var conDevice in contactsDevice["contacts"]) {
+    for (var conDevice in contactsDevice) {
       for (var conServer in contactServer) {
         String whatsappfileName = conServer["imgWhatsAppUrl"];
         String phoneContactServer = conServer["phone"];
@@ -218,7 +226,7 @@ class ContactsManager {
 
           Contact contact = conDevice;
           contact.whatsappImg = fileWhatsappName;
-
+          contacsToUpdateWhatsappImage.add(contact);
           listUpdatefilewhatsappImage.add({
             "phone": conDevice.uniquePhone!,
             "whatsappFileName": fileWhatsappName
@@ -230,6 +238,6 @@ class ContactsManager {
     await ContactsManager()
         .updateSqliteContactWhatsappImage(listUpdatefilewhatsappImage);
 
-    return contacsToUpdate;
+    return contacsToUpdateWhatsappImage;
   }
 }
