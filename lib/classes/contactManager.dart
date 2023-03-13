@@ -1,5 +1,6 @@
 import 'package:identity/Store/sqldb.dart';
 import 'dart:convert';
+import '../Utils/fileManager.dart';
 import '../models/Contact.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +11,7 @@ class ContactsManager {
         "SELECT * FROM Contact WHERE uniquePhone LIKE '%$searchText%' LIMIT $limit";
     SqlDb sqlDb = await SqlDb();
     var listContact = await sqlDb.readData(query);
-    return listContact; //
+    return listContact;
   }
 
   formatContactFromSqlite(List<dynamic> list) {
@@ -120,5 +121,47 @@ class ContactsManager {
       }
     }
     await Future.wait(futures);
+  }
+
+  addContactWhatsAppImage(List<String> phones,
+      Future<Map<String, dynamic>> contactsDeviceSnapshot) async {
+    List<Map<String, Object>> listUpdatefilewhatsappImage = [];
+    var contactsDevice = await contactsDeviceSnapshot;
+
+    var contactServer =
+        await ContactsManager().getWhatsAppImageContacts(phones);
+
+    for (var conDevice in contactsDevice["contacts"]) {
+      for (var conServer in contactServer) {
+        String whatsappfileName = conServer["imgWhatsAppUrl"];
+        String phoneContactServer = conServer["phone"];
+
+        if (conDevice.uniquePhone == phoneContactServer) {
+          String fileWhatsappName =
+              await FileManager().saveWhatsappFile(whatsappfileName);
+          conDevice.whatsappImg = fileWhatsappName;
+
+          listUpdatefilewhatsappImage.add({
+            "phone": conDevice.uniquePhone!,
+            "whatsappFileName": fileWhatsappName
+          });
+          // change the phone number for this object
+        }
+      }
+    }
+    await ContactsManager()
+        .updateSqliteContactWhatsappImage(listUpdatefilewhatsappImage);
+  }
+
+  getOnlyFhonesContacts(List<Contact> contacts) {
+    List<String> phones = contacts
+        .where((contact) =>
+            contact.whatsappImg == null &&
+            contact.uniquePhone !=
+                "") // filter out objects with null "user" property
+        .map((obj) =>
+            obj.uniquePhone!) // extract "phone" property from remaining objects
+        .toList();
+    return phones;
   }
 }

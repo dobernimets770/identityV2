@@ -17,25 +17,65 @@ class MainNavPages extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              size: 30,
-              Icons.account_circle,
-              color: Color.fromARGB(255, 85, 83, 83),
+            Column(
+              children: [
+                Icon(
+                  size: 30,
+                  Icons.account_circle,
+                  color: Color.fromARGB(255, 85, 83, 83),
+                ),
+                Text(
+                  "My Profile",
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ],
             ),
-            Icon(
-              size: 30,
-              Icons.account_box,
-              color: Color.fromARGB(255, 85, 83, 83),
+            Column(
+              children: [
+                Icon(
+                  size: 30,
+                  Icons.account_box,
+                  color: Color.fromARGB(255, 85, 83, 83),
+                ),
+                Text(
+                  "Contacts",
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ],
             ),
-            Icon(
-              size: 30,
-              Icons.star,
-              color: Color.fromARGB(255, 85, 83, 83),
+            Column(
+              children: [
+                Icon(
+                  size: 30,
+                  Icons.star,
+                  color: Color.fromARGB(255, 85, 83, 83),
+                ),
+                Text(
+                  "Favorites",
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ],
             ),
-            Icon(
-              size: 30,
-              Icons.phone,
-              color: Color.fromARGB(255, 85, 83, 83),
+            Column(
+              children: [
+                Icon(
+                  size: 30,
+                  Icons.phone,
+                  color: Color.fromARGB(255, 85, 83, 83),
+                ),
+                Text(
+                  "Resent",
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:identity/pages/ContactsPageList.dart';
+import 'package:identity/pages/ContactsListPage.dart';
+import 'package:identity/pages/FavoritestListPage.dart';
 import 'package:identity/pages/DialerPage.dart';
 
 import '../component/MainNavPages.dart';
@@ -43,8 +44,9 @@ class _PageViewDemoState extends State<PageViewDemo> {
       children: <Widget>[
         Expanded(
           child: PageView(controller: _controller, children: [
-            DialerPage(),
-            ContactListPage(),
+            //DialerPage(),
+            //FavoritestListPage(),
+            ContactsListPage(),
           ]),
         ),
         MainNavPages(),

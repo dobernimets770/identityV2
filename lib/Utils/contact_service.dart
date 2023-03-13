@@ -45,9 +45,9 @@ class ContactsService {
       //ContactsManager().createContacts(contactsCreateServer);
     }
 
-    var conttactFromSqlite = await ContactsManager().getSomeContacts(30);
+    var contactFromSqlite = await ContactsManager().getSomeContacts(count);
     var fixCon =
-        await ContactsManager().formatContactFromSqlite(conttactFromSqlite);
+        await ContactsManager().formatContactFromSqlite(contactFromSqlite);
     var localPath = await FileManager().getLoclPath();
     return {'contacts': fixCon, "localPath": localPath};
   }

@@ -126,7 +126,8 @@ class _DialerPageState extends State<DialerPage> {
       findOneContact = formatContact[0];
     }
     setState(() {});
-    List<String> phones = _getOnlyFhonesContacts(formatContact);
+    List<String> phones =
+        ContactsManager().getOnlyFhonesContacts(formatContact);
     //searchWhatsAppImage(phones);
   }
 
@@ -136,7 +137,8 @@ class _DialerPageState extends State<DialerPage> {
       contactsSearch = snapshot.data!["contacts"] as List<Contact>;
     }
 
-    List<String> phones = _getOnlyFhonesContacts(contactsSearch);
+    List<String> phones =
+        ContactsManager().getOnlyFhonesContacts(contactsSearch);
     addContactWhatsAppImage(phones);
 
     if (findOneContact != null) {
@@ -176,49 +178,9 @@ class _DialerPageState extends State<DialerPage> {
   }
 
   addContactWhatsAppImage(List<String> phones) async {
-    List<Map<String, Object>> listUpdatefilewhatsappImage = [];
-    var contactsDevice = await getContacts;
-
-    var contactServer =
-        await ContactsManager().getWhatsAppImageContacts(phones);
-
-    for (var conDevice in contactsDevice["contacts"]) {
-      for (var conServer in contactServer) {
-        String whatsappfileName = conServer["imgWhatsAppUrl"];
-        String phoneContactServer = conServer["phone"];
-
-        if (conDevice.uniquePhone == phoneContactServer) {
-          String fileWhatsappName =
-              await FileManager().saveWhatsappFile(whatsappfileName);
-          conDevice.whatsappImg = fileWhatsappName;
-
-          listUpdatefilewhatsappImage.add({
-            "phone": conDevice.uniquePhone!,
-            "whatsappFileName": fileWhatsappName
-          });
-          // change the phone number for this object
-        }
-      }
-    }
-    await ContactsManager()
-        .updateSqliteContactWhatsappImage(listUpdatefilewhatsappImage);
-    if (itsFirstTimeLoading == true) {
-      itsFirstTimeLoading = false;
-    }
+    await ContactsManager().addContactWhatsAppImage(phones, getContacts);
     setState(() {
       contactsSearch = contactsSearch;
     });
   }
-
-  _getOnlyFhonesContacts(List<Contact> contacts) {
-    List<String> phones = contacts
-        .where((contact) =>
-            contact.whatsappImg == null &&
-            contact.uniquePhone !=
-                "") // filter out objects with null "user" property
-        .map((obj) =>
-            obj.uniquePhone!) // extract "phone" property from remaining objects
-        .toList();
-    return phones;
-  }
-}//5556106679
+}
