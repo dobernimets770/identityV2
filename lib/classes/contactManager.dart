@@ -10,7 +10,7 @@ class ContactsManager {
         "SELECT * FROM Contact WHERE uniquePhone LIKE '%$searchText%' LIMIT $limit";
     SqlDb sqlDb = await SqlDb();
     var listContact = await sqlDb.readData(query);
-    return listContact;
+    return listContact; //
   }
 
   formatContactFromSqlite(List<dynamic> list) {
