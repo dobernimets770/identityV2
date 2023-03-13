@@ -166,7 +166,7 @@ class _DialerPageState extends State<DialerPage> {
       contactsItems: contactsSearch,
       itemPerRow: 5,
       heightGrid: MediaQuery.of(context).size.height * 0.3,
-      widthGrid: MediaQuery.of(context).size.width * 0.8,
+      widthGrid: MediaQuery.of(context).size.width * 0.82,
     );
   }
 

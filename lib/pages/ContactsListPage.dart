@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../Utils/contact_service.dart';
 import '../classes/contactManager.dart';
 import '../component/contacts/ContactViewGrid.dart';
+import '../component/contacts/HeaderContact.dart';
 import '../models/Contact.dart';
 
 class ContactsListPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _ContactsListPage extends State<ContactsListPage>
   }
 
   initContacts() async {
-    getContacts = ContactsService().getContacts(20);
+    getContacts = ContactsService().getContacts(25);
   }
 
   @override
@@ -44,10 +45,19 @@ class _ContactsListPage extends State<ContactsListPage>
           return Visibility(
             visible: false,
             child: CircularProgressIndicator(),
-          ); // Show a loading spinner while we're waiting for the contacts to be fetched
+          );
         } else {
-          // Set the contactsItems to an empty list if there was an error fetching the contacts
-          return showContactsFindBySearch(snapshot);
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Stack(
+                children: [
+                  HeaderContact(),
+                ],
+              ),
+              showContactsFindBySearch(snapshot),
+            ],
+          );
         }
       },
     );
@@ -67,10 +77,10 @@ class _ContactsListPage extends State<ContactsListPage>
     return ContactViewGrid(
       localPath: snapshot.data!["localPath"],
       clickItemContact: () {},
-      contactsItems: contactsSearch,
+      contactsItems: contactsSearch + contactsSearch,
       itemPerRow: 4,
-      heightGrid: MediaQuery.of(context).size.height * 0.3,
-      widthGrid: MediaQuery.of(context).size.width * 0.8,
+      heightGrid: MediaQuery.of(context).size.height * 0.7,
+      widthGrid: MediaQuery.of(context).size.width * 0.92,
     );
   }
 

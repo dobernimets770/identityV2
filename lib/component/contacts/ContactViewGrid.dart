@@ -36,9 +36,9 @@ class _ContactViewGridState extends State<ContactViewGrid>
         itemCount: widget.contactsItems.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: widget.itemPerRow,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-          childAspectRatio: 1 / 1.3,
+          crossAxisSpacing: widget.widthGrid * 0.04,
+          mainAxisSpacing: widget.widthGrid * 0.04,
+          childAspectRatio: 1 / 1.34,
         ),
         itemBuilder: (BuildContext context, int index) {
           return ContactItem(
