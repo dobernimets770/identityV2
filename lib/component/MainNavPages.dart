@@ -10,8 +10,8 @@ class MainNavPages extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(top: 10.0),
         padding: EdgeInsets.only(
-          left: MediaQuery.of(context).size.width * 0.1,
-          right: MediaQuery.of(context).size.width * 0.1,
+          left: MediaQuery.of(context).size.width * 0.05,
+          right: MediaQuery.of(context).size.width * 0.05,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

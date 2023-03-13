@@ -115,7 +115,7 @@ class _DialerPageState extends State<DialerPage> {
       return;
     }
     var result = await ContactsManager()
-        .findContactsDevice(controllerDialerSearch.text, 15);
+        .findContactsDeviceByPhone(controllerDialerSearch.text, 15);
     findOneContact = null;
     if (result.length == 0) return;
 

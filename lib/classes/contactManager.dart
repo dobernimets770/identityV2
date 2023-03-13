@@ -6,9 +6,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class ContactsManager {
-  findContactsDevice(String searchText, int limit) async {
+  findContactsDeviceByPhone(String searchText, int limit) async {
     String query =
         "SELECT * FROM Contact WHERE uniquePhone LIKE '%$searchText%' LIMIT $limit";
+    SqlDb sqlDb = await SqlDb();
+    var listContact = await sqlDb.readData(query);
+    return listContact;
+  }
+
+  findContactsDeviceByNameAndPhone(String searchText, int limit) async {
+    String query =
+        "SELECT * FROM Contact WHERE uniquePhone LIKE '%$searchText%' OR givenName LIKE '%$searchText%' OR middleName LIKE '%$searchText%' OR displayName LIKE '%$searchText%' LIMIT $limit";
     SqlDb sqlDb = await SqlDb();
     var listContact = await sqlDb.readData(query);
     return listContact;
@@ -163,5 +171,65 @@ class ContactsManager {
             obj.uniquePhone!) // extract "phone" property from remaining objects
         .toList();
     return phones;
+  }
+
+  indexContacts(List<Contact> contacts) {
+    Map<String, dynamic> contactsObject = Map.fromIterable(contacts,
+        key: (contact) => contact['uniquePhone'], value: (contact) => contact);
+  }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+  addContactWhatsAppImageTEST(List<String> phones,
+      Future<Map<String, dynamic>> contactsDeviceSnapshot) async {
+    List<Contact> contacsToUpdate = [];
+    List<Map<String, Object>> listUpdatefilewhatsappImage = [];
+    var contactsDevice = await contactsDeviceSnapshot;
+
+    var contactServer =
+        await ContactsManager().getWhatsAppImageContacts(phones);
+
+    for (var conDevice in contactsDevice["contacts"]) {
+      for (var conServer in contactServer) {
+        String whatsappfileName = conServer["imgWhatsAppUrl"];
+        String phoneContactServer = conServer["phone"];
+
+        if (conDevice.uniquePhone == phoneContactServer) {
+          String fileWhatsappName =
+              await FileManager().saveWhatsappFile(whatsappfileName);
+
+          Contact contact = conDevice;
+          contact.whatsappImg = fileWhatsappName;
+
+          listUpdatefilewhatsappImage.add({
+            "phone": conDevice.uniquePhone!,
+            "whatsappFileName": fileWhatsappName
+          });
+          // change the phone number for this object
+        }
+      }
+    }
+    await ContactsManager()
+        .updateSqliteContactWhatsappImage(listUpdatefilewhatsappImage);
+
+    return contacsToUpdate;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../Utils/contact_service.dart';
@@ -15,7 +17,11 @@ class ContactsListPage extends StatefulWidget {
 
 class _ContactsListPage extends State<ContactsListPage>
     with SingleTickerProviderStateMixin {
+  Timer? timerContactSearch;
+
   late AnimationController _controller;
+  final TextEditingController controllerContactSearch = TextEditingController();
+
   Future<Map<String, dynamic>> getContacts = Future.value({});
   bool itsFirstLoiad = true;
   List<Contact> contactsSearch = [];
@@ -52,7 +58,10 @@ class _ContactsListPage extends State<ContactsListPage>
             children: [
               Stack(
                 children: [
-                  HeaderContact(),
+                  HeaderContact(
+                    onSearch: onSearch,
+                    controllerContactSearch: controllerContactSearch,
+                  ),
                 ],
               ),
               showContactsFindBySearch(snapshot),
@@ -65,8 +74,9 @@ class _ContactsListPage extends State<ContactsListPage>
 
   Widget showContactsFindBySearch(
       AsyncSnapshot<Map<String, dynamic>> snapshot) {
-    if (contactsSearch.length ==
-        0 /*and searc input that for init upload componenet*/) {
+    if (contactsSearch.length == 0 &&
+        controllerContactSearch.text.length ==
+            0 /*and searc input that for init upload componenet*/) {
       contactsSearch = snapshot.data!["contacts"] as List<Contact>;
     }
 
@@ -77,7 +87,7 @@ class _ContactsListPage extends State<ContactsListPage>
     return ContactViewGrid(
       localPath: snapshot.data!["localPath"],
       clickItemContact: () {},
-      contactsItems: contactsSearch + contactsSearch,
+      contactsItems: contactsSearch,
       itemPerRow: 4,
       heightGrid: MediaQuery.of(context).size.height * 0.7,
       widthGrid: MediaQuery.of(context).size.width * 0.92,
@@ -88,6 +98,53 @@ class _ContactsListPage extends State<ContactsListPage>
     await ContactsManager().addContactWhatsAppImage(phones, getContacts);
     setState(() {
       contactsSearch = contactsSearch;
+    });
+  }
+
+  void onSearch(String? value) {
+    onTimerContacsSearchChange();
+  }
+
+  onTimerContacsSearchChange() {
+    if (timerContactSearch?.isActive ?? false) timerContactSearch!.cancel();
+    timerContactSearch = Timer(const Duration(milliseconds: 700), () {
+      searchContactsInput();
+    });
+  }
+
+  searchContactsInput() async {
+    if (timerContactSearch?.isActive ?? true) {
+      return;
+    }
+    if (controllerContactSearch.text == "") {
+      setState(() async {
+        var contacsFuture = await getContacts as dynamic;
+        setState(() {
+          contactsSearch = contacsFuture["contacts"] as List<Contact>;
+        });
+      });
+      return;
+    }
+    var result = await ContactsManager()
+        .findContactsDeviceByNameAndPhone(controllerContactSearch.text, 15);
+
+    if (result.length == 0) {
+      setState(() {
+        contactsSearch = [];
+      });
+    }
+    ;
+
+    //}
+
+    List<Contact> formatContact =
+        await ContactsManager().formatContactFromSqlite(result);
+
+    List<String> phones =
+        ContactsManager().getOnlyFhonesContacts(formatContact);
+    await addContactWhatsAppImage(phones);
+    setState(() {
+      contactsSearch = formatContact;
     });
   }
 }
