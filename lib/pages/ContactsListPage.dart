@@ -33,7 +33,7 @@ class _ContactsListPage extends State<ContactsListPage>
   }
 
   initContacts() async {
-    getContacts = ContactsService().getContacts(25);
+    getContacts = ContactsService().getContacts(30);
   }
 
   @override

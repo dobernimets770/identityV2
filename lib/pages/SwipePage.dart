@@ -43,14 +43,40 @@ class _PageViewDemoState extends State<PageViewDemo> {
     return Column(
       children: <Widget>[
         Expanded(
-          child: PageView(controller: _controller, children: [
-            //DialerPage(),
-            //FavoritestListPage(),
-            ContactsListPage(),
-          ]),
+          child: Stack(
+            children: <Widget>[
+              PageView(
+                controller: _controller,
+                children: [
+                  DialerPage(),
+                  ContactsListPage(),
+                ],
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: MediaQuery.of(context).size.height * 0.05,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withOpacity(0),
+                        Colors.white.withOpacity(0.89),
+                      ],
+                      stops: [0, 0.9227],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         MainNavPages(),
       ],
     );
+    ;
   }
 }
